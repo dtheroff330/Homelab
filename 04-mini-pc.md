@@ -1,4 +1,4 @@
-# 04 - Mini PC: Services Host
+# 04 — Mini PC: Services Host
 
 **Debian · Docker · Caddy · Vaultwarden · OwnTracks**
 
