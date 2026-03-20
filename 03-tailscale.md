@@ -86,6 +86,8 @@ echo 'net.ipv4.ip_forward=1' | sudo tee -a /etc/sysctl.conf
 sudo sysctl -p
 ```
 
+As a note, the above command did not persist through a forced reboot (power outage). You must force them to persist via /etc/sysctl.d/. Otherwise, tailscale will use a DERP relay and slow down dramatically.
+
 After enabling IP forwarding and reconnecting Tailscale on the iPhone, cellular access worked correctly. Confirmed at the gym on mobile data.
 
 ### DNS Configuration
