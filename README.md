@@ -78,6 +78,7 @@ Consistent across all Linux hosts:
 - [03-tailscale.md](03-tailscale.md) - Tailscale subnet router, remote access, DNS integration
 - [04-mini-pc.md](04-mini-pc.md) - Docker Compose, Vaultwarden, OwnTracks, Caddy
 - [05-t400s.md](05-t400s.md) - SSH management terminal, security hardening, hardware repurposing
+- [06-nas.md](06-nas.md) - openMediaVault, RAID, Data Sovereignty
 
 ---
 
