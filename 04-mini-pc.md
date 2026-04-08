@@ -1,12 +1,14 @@
 # 04 — Mini PC: Services Host
 
-**Debian · Docker · Caddy · Vaultwarden · OwnTracks**
+**Debian · Docker · Caddy · Vaultwarden**
+
+**DEPRECATED - OwnTracks**
 
 ---
 
 ## Overview
 
-This document covers the complete setup of the mini PC as the homelab services host. The machine runs Debian Stable with Docker for container management and Caddy as a reverse proxy with automatic TLS certificates. Two services are currently deployed: Vaultwarden (self-hosted password manager) and OwnTracks (self-hosted location sharing). Additional services (Nextcloud, Jellyfin, Immich) are planned pending NAS completion.
+This document covers the complete setup of the mini PC as the homelab services host. The machine runs Debian Stable with Docker for container management and Caddy as a reverse proxy with automatic TLS certificates. Two services are currently deployed: Vaultwarden (self-hosted password manager) and (). Additional services (Nextcloud, Jellyfin, Immich) are planned pending NAS completion.
 
 ---
 
@@ -180,47 +182,6 @@ Key environment variables in `docker-compose.yml`:
 
 ---
 
-## OwnTracks
-
-OwnTracks is a free, open source location sharing app for iOS and Android. It pushes location data to a self-hosted OwnTracks Recorder rather than any third party - completely private, self-controlled location sharing between household members.
-
-Exposing location data to the public internet was immediately rejected. All access is Tailscale-only, consistent with the rest of the homelab's security posture.
-
-### Configuration
-
-OwnTracks Recorder runs in HTTP mode - no MQTT broker required. `OTR_PORT=0` disables the built-in HTTP port since Caddy handles all inbound traffic.
-
-`owntracks.therofflab.net` added to AdGuard Home as a DNS rewrite and to the Caddyfile with the same Porkbun TLS configuration as Vaultwarden.
-
-### App Configuration - Android (Pixel)
-
-- Mode: HTTP
-- URL: `https://owntracks.therofflab.net/pub`
-- Username: set per user
-- Device ID: set per device
-- No password required - Tailscale provides network-level access control
-
-### App Configuration - iOS (iPhone)
-
-The iOS app constructs the URL from separate fields rather than a single URL input:
-
-- Host: `owntracks.therofflab.net` - domain only, **no** `https://` prefix
-- TLS toggle: ON
-- Port: `443`
-- URL: `/pub`
-
-Including `https://` in the Host field causes a malformed URL error (`NSURLErrorDomain -1002`).
-
-### Friend Visibility
-
-The OwnTracks Recorder web UI at `owntracks.therofflab.net` shows all users on a map. In-app friend visibility requires additional recorder configuration - deemed unnecessary since the web UI is sufficient and bookmarked on both phones.
-
-### Tailscale Requirement
-
-Since `owntracks.therofflab.net` only resolves locally, both phones must be on the Tailscale tailnet for OwnTracks to function away from home.
-
----
-
 ## Adding Future Services
 
 Every new service follows the same pattern:
@@ -248,12 +209,6 @@ Every new service follows the same pattern:
 - Porkbun API access must be enabled at both the account level and per-domain
 - DNS provider plugins must be compiled into Caddy - they are not included in the official image
 
-### OwnTracks iOS vs. Android
-
-- iOS constructs the URL from separate Host/Port/TLS/URL fields - do not include `https://` in the Host field
-- Android takes a single full URL - include the complete `https://domain/pub`
-- The `/pub` endpoint is required for OwnTracks Recorder in HTTP mode
-
 ### Tailscale & Local Services
 
 - The mini PC does not need to be a Tailscale node - the Pi's subnet router advertising `192.168.8.0/24` provides full remote access to all LAN devices
@@ -270,7 +225,6 @@ Every new service follows the same pattern:
 | Docker | Installed, `daniel` in docker group |
 | Caddy | Running, custom build with Porkbun plugin, certs active |
 | Vaultwarden | Running at `vault.therofflab.net`, 2FA enabled, passwords imported |
-| OwnTracks | Running at `owntracks.therofflab.net`, both phones reporting |
 | Tailscale | Not installed - subnet routing via Pi handles remote access |
 | Backups | Planned - Docker volumes to NAS once NAS is running |
 
@@ -283,6 +237,10 @@ Every new service follows the same pattern:
 - Deploy Nextcloud, Jellyfin, and Immich once NAS storage is available
 
 ---
+
+## Deprecations & Explanations
+
+- **OwnTracks** -> deprecated due to extremely high Android battery usage. This issue was not present on iOS, and no amount of configuration seemed to resolve the issue.
 
 ## Current Caddyfile
 
@@ -297,19 +255,10 @@ vault.therofflab.net {
     reverse_proxy vaultwarden:80
 }
 
-owntracks.therofflab.net {
-    tls {
-        dns porkbun {
-            api_key {env.PORKBUN_API_KEY}
-            api_secret_key {env.PORKBUN_SECRET_API_KEY}
-        }
-    }
-    reverse_proxy owntracks:8083
-}
 ```
 
 ---
 
 ## Technologies & Skills Demonstrated
 
-`Debian` `Docker` `Docker Compose` `Caddy` `Reverse Proxy` `TLS` `Let's Encrypt` `DNS-01 Challenge` `Vaultwarden` `Bitwarden` `OwnTracks` `Self-Hosting` `Linux Hardening` `SSH` `Networking` `mDNS`
+`Debian` `Docker` `Docker Compose` `Caddy` `Reverse Proxy` `TLS` `Let's Encrypt` `DNS-01 Challenge` `Vaultwarden` `Bitwarden` `Self-Hosting` `Linux Hardening` `SSH` `Networking` `mDNS`
