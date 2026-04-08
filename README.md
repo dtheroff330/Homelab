@@ -45,7 +45,6 @@ Internet
 | Prometheus + Grafana | Pi 5 | Infrastructure monitoring |
 | Tailscale | Pi 5 | Remote LAN Access |
 | Vaultwarden | Mini PC | Self-hosted password manager |
-| OwnTracks | Mini PC | Location tracking |
 | Caddy | Mini PC | Reverse proxy with DNS-01 TLS (Porkbun) |
 
 ---
@@ -76,7 +75,7 @@ Consistent across all Linux hosts:
 - [01-network.md](01-network.md) - AT&T BGW320-505, GL.iNet Flint 2, TP-Link EAP720
 - [02-pi.md](02-pi.md) - Raspberry Pi 5: Unbound, Prometheus, Grafana, unbound_exporter
 - [03-tailscale.md](03-tailscale.md) - Tailscale subnet router, remote access, DNS integration
-- [04-mini-pc.md](04-mini-pc.md) - Docker Compose, Vaultwarden, OwnTracks, Caddy
+- [04-mini-pc.md](04-mini-pc.md) - Docker Compose, Vaultwarden, Caddy
 - [05-t400s.md](05-t400s.md) - SSH management terminal, security hardening, hardware repurposing
 - [06-nas.md](06-nas.md) - OpenMediaVault, RAID, Data Sovereignty
 
@@ -84,4 +83,4 @@ Consistent across all Linux hosts:
 
 ## Technologies
 
-`Debian` `Linux` `Docker` `Docker Compose` `Caddy` `Tailscale` `Unbound` `AdGuard Home` `Prometheus` `Grafana` `Vaultwarden` `OwnTracks` `SSH` `ufw` `fail2ban` `LUKS` `DNS` `DHCP` `Porkbun DNS-01` `ed25519` `OpenMediaVault`
+`Debian` `Linux` `Docker` `Docker Compose` `Caddy` `Tailscale` `Unbound` `AdGuard Home` `Prometheus` `Grafana` `Vaultwarden` `SSH` `ufw` `fail2ban` `LUKS` `DNS` `DHCP` `Porkbun DNS-01` `ed25519` `OpenMediaVault`
