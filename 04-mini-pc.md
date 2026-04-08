@@ -1,6 +1,6 @@
 # 04 — Mini PC: Services Host
 
-**Debian · Docker · Caddy · Vaultwarden**
+**Debian · Docker · Caddy · Vaultwarden · degoog**
 
 **DEPRECATED - OwnTracks**
 
@@ -8,7 +8,7 @@
 
 ## Overview
 
-This document covers the complete setup of the mini PC as the homelab services host. The machine runs Debian Stable with Docker for container management and Caddy as a reverse proxy with automatic TLS certificates. Two services are currently deployed: Vaultwarden (self-hosted password manager) and (). Additional services (Nextcloud, Jellyfin, Immich) are planned pending NAS completion.
+This document covers the complete setup of the mini PC as the homelab services host. The machine runs Debian Stable with Docker for container management and Caddy as a reverse proxy with automatic TLS certificates. Two services are currently deployed: Vaultwarden (self-hosted password manager) and degoog, a self hosted search engine. Additional services (Nextcloud, Jellyfin, Immich) are planned pending NAS completion.
 
 ---
 
@@ -182,6 +182,40 @@ Key environment variables in `docker-compose.yml`:
 
 ---
 
+## degoog
+
+degoog (yes, degoog and not Degoog!) is a self-hosted search engine that aggregates results from various other engines, similar to that of SearXNG. While not as customizable as SearXNG, it benefits from being extremely easy to setup and maintain. It features a native plugin ecosystem made by the author of the project, as well as the ability to import other plugin repos for extended functionality. It even features the ability to use an OpenAI API key to use for AI generated "overviews" for searches, similar to that of popular search engines.
+
+### Configuration
+
+Changes to docker-compose.yml
+
+- Due to the nature of my reverse proxy setup with Caddy and Porkbun, there was no need for ports: "4444:4444", this was instead replaced with networks: proxy
+- An additional set of lines was added for the proxy setup to ensure the container looked for an external proxy. This took a fair bit of trial and error, as compared to Vaultwarden.
+- DNS rewrite created on Adguard home, same as Vaultwarden.
+
+### Setup Process
+
+1. By default, all engines except for Wikipedia are selected. For privacy reasons, this was changed to only Brave Search.
+2. Search suggestions and engine performance were toggled off for both privacy reasons and simplicity of UX for the other household users.
+3. Plugins added: Define, Weather, Time, Math - each setup to use natural language input instead of needing to call a command.
+4. Additional Engines: Startpage - chosen to be able to pull "close to Google" results without the legal gray area of doing so. Pairs well with Brave Search.
+5. Additional Image Search: DuckDuckGo images - chosen for privacy reasons over the default Google/Bing options.
+6. Intentional Exclusions: No search history - this was done to ensure household privacy, so one resident cannot see the searches of another.
+
+### Notes
+
+- Some engines, namely large "name-brand" engines such as Google or Bing tend to have poor results. Conversely, smaller engines (such as the ones in use) provide much more accurate results, the inverse of regular behavior.
+- At times, an engine may fail to pull results. You are able to quickly retry in case of failure from the search results page.
+- Rate limits are able to be applied if you have this service open to the internet for others outside of your LAN to use, although this is unnecessary in a LAN context.
+- **Each user is able to change settings independently:** this allows one user to use an entirely different set of plugins and engines from another, depending on personal preference. Arguably the best feature!
+
+### Remote Access
+
+`search.therofflab.net` resolves only via Adguard Home's DNS rewrite, exactly the same as Vaultwarden. Remote access is functional with tailscale, although slightly slower than on the LAN as expected. Once again, the mini pc does not need to be on the tailnet for this to function.
+
+---
+
 ## Adding Future Services
 
 Every new service follows the same pattern:
@@ -225,6 +259,7 @@ Every new service follows the same pattern:
 | Docker | Installed, `daniel` in docker group |
 | Caddy | Running, custom build with Porkbun plugin, certs active |
 | Vaultwarden | Running at `vault.therofflab.net`, 2FA enabled, passwords imported |
+| degoog | Running at `search.therofflab.net`, End-user customizable, no AI summaries implemented as of yet |
 | Tailscale | Not installed - subnet routing via Pi handles remote access |
 | Backups | Planned - Docker volumes to NAS once NAS is running |
 
@@ -261,4 +296,4 @@ vault.therofflab.net {
 
 ## Technologies & Skills Demonstrated
 
-`Debian` `Docker` `Docker Compose` `Caddy` `Reverse Proxy` `TLS` `Let's Encrypt` `DNS-01 Challenge` `Vaultwarden` `Bitwarden` `Self-Hosting` `Linux Hardening` `SSH` `Networking` `mDNS`
+`Debian` `Docker` `Docker Compose` `Caddy` `Reverse Proxy` `TLS` `Let's Encrypt` `DNS-01 Challenge` `Vaultwarden` `Bitwarden` `degoog` `Self-Hosting` `Linux Hardening` `SSH` `Networking` `mDNS`
